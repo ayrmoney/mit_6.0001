@@ -80,8 +80,9 @@ def get_guessed_word(secret_word, letters_guessed):
       which letters in secret_word have been guessed so far.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
+    for letter in secret_word:
+        if letter in letters_guessed:
+            pass
 
 
 def get_available_letters(letters_guessed):
