@@ -1,7 +1,7 @@
 # Problem Set 2, hangman.py
 # Name: ayrmoney 
 # Collaborators: None
-# Time spent: 6:17PM -
+# Time spent: 6:17PM - 7:44PM
 
 # Hangman Game
 # -----------------------------------
