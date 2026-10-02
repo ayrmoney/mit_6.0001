@@ -22,14 +22,14 @@ def load_words():
     Depending on the size of the word list, this function may
     take a while to finish.
     """
-    print("Loading word list from file...")
+    # print("Loading word list from file...")
     # inFile: file
     inFile = open(WORDLIST_FILENAME, 'r')
     # line: string
     line = inFile.readline()
     # wordlist: list of strings
     wordlist = line.split()
-    print("  ", len(wordlist), "words loaded.")
+    # print("  ", len(wordlist), "words loaded.")
     return wordlist
 
 
@@ -62,7 +62,7 @@ def is_word_guessed(secret_word: str, letters_guessed: list) -> bool:
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     secret_letters = list(secret_word)
-    print(secret_letters)
+    # print(secret_letters)
     
     for letter in secret_letters:
         if letter in letters_guessed:
@@ -80,10 +80,15 @@ def get_guessed_word(secret_word, letters_guessed):
       which letters in secret_word have been guessed so far.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
+    guessed_word = []
     for letter in secret_word:
         if letter in letters_guessed:
-            pass
+            guessed_word.append(letter)
+        else:
+            guessed_word.append("_")
+        # print(guessed_word)
 
+    return ''.join(guessed_word)
 
 def get_available_letters(letters_guessed):
     '''
@@ -92,9 +97,12 @@ def get_available_letters(letters_guessed):
       yet been guessed.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-    
-    
+    alphabets = list(string.ascii_lowercase)
+    for letter in letters_guessed:
+        if letter in alphabets:
+            alphabets.remove(letter)
+            # print(f"{letter} removed!")
+    return ''.join(alphabets) 
 
 def hangman(secret_word):
     '''
@@ -123,23 +131,70 @@ def hangman(secret_word):
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
     
-    n = len(secret_word)
+    n = len(''.join(set(secret_word)))
     ng = 6
+    nw = 3
 
-    print("===== HANGMAN =====")
-    print(f"You've {ng} guesses. Good luck!")
-    for i in range(6):
-        print("_", end='')
-    print("\n")
+    print("Welcome to the game Hangman!")
+    print(f"I am thinking of a word that is {len(secret_word)} letters long.")
+    print("----------")
     
-    for i in range(ng):
-        if i != 0:
-            print(f"Incorrect! {ng - i} guesses left.")
-        guess = input("Guess: ")
+    letters_guessed = []
+    while ng > 0:
+        print(f"You've {ng} guesses left.")
+        print(f"Available letters: {get_available_letters(letters_guessed)}")
+        guess = input("Please guess a letter: ")
 
-        if guess in secret_word:
-            pass
+        if not guess.isalpha() or len(guess) != 1:
+            if nw > 0:
+                nw -= 1
+                print(f"Hmm... that is not a valid letter. {nw} warnings left:")
+                print(get_guessed_word(secret_word, letters_guessed))
+                print("----------")
+            else:
+                ng -= 1
+                print(f"Hmm... that is not a valid letter. And you have no  warnings left:")
+                print(f"So you loose one guess: {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            continue
 
+        guess = guess.lower()
+
+        if guess in letters_guessed:
+            if nw > 0:
+                nw -= 1
+                print(f"Hmm... you already guessed that letter. {nw} warnings left:")
+                print(get_guessed_word(secret_word, letters_guessed))
+                print("----------")
+            else:
+                ng -= 1
+                print(f"Hmm... you already guessed that letter. And you have no  warnings left:")
+                print(f"So you loose one guess: {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            continue
+        
+        letters_guessed.append(guess)
+
+        if is_word_guessed(secret_word, letters_guessed):
+            break
+        else:
+            if guess in secret_word:
+                print(f"Good girl! {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            else:
+                print(f"Nooo... that letter is not in my word.")
+                print("----------")
+                if guess in ['a', 'e', 'i', 'o', 'u']:
+                    ng = ng - 2
+                else:
+                    ng -= 1
+        
+    if ng>0:
+        print("Congratulations girl, you won!")
+        score = ng * n
+        print(f"You scored: {score} pts")
+    else:
+        print(f"Hanged! You ran out of guesses. The word was {secret_word}.")
 
 # When you've completed your hangman function, scroll down to the bottom
 # of the file and uncomment the first two lines to test
@@ -225,9 +280,8 @@ if __name__ == "__main__":
     # uncomment the following two lines.
     
     secret_word = choose_word(wordlist)
-    # hangman("hangman")
-    print(is_word_guessed("apple", ['e', 'i', 'k', 'p', 'r', 's']))
-
+    # secret_word = "apple"
+    hangman(secret_word)
 ###############
     
     # To test part 3 re-comment out the above lines and 
