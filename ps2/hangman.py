@@ -216,9 +216,15 @@ def match_with_gaps(my_word, other_word):
         False otherwise: 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
-
+    if len(my_word.strip()) == len(other_word.strip()):
+        for i in range(len(my_word)):
+            if my_word[i] != "_" and my_word[i] != other_word[i]:
+                return False
+            elif my_word[i] == "_" and other_word[i] in ''.join(my_word):
+                return False
+        return True
+    else:
+        return False
 
 def show_possible_matches(my_word):
     '''
@@ -231,8 +237,14 @@ def show_possible_matches(my_word):
 
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
-
+    matched = []
+    for word in wordlist:
+        if match_with_gaps(my_word, word):
+            matched.append(word)
+    if len(matched) > 0:
+        print(*matched) 
+    else:
+        print("No matches found")
 
 
 def hangman_with_hints(secret_word):
@@ -263,7 +275,75 @@ def hangman_with_hints(secret_word):
     Follows the other limitations detailed in the problem write-up.
     '''
     # FILL IN YOUR CODE HERE AND DELETE "pass"
-    pass
+    n = len(''.join(set(secret_word)))
+    ng = 6
+    nw = 3
+
+    print("Welcome to the game Hangman!")
+    print(f"I am thinking of a word that is {len(secret_word)} letters long.")
+    print("----------")
+    
+    letters_guessed = []
+    while ng > 0:
+        print(f"You've {ng} guesses left.")
+        print(f"Available letters: {get_available_letters(letters_guessed)}")
+        guess = input("Please guess a letter: ")
+
+        if guess == "*":
+            show_possible_matches(get_guessed_word(secret_word, letters_guessed))
+            print("----------")
+            continue
+
+        if not guess.isalpha() or len(guess) != 1:
+            if nw > 0:
+                nw -= 1
+                print(f"Hmm... that is not a valid letter. {nw} warnings left:")
+                print(get_guessed_word(secret_word, letters_guessed))
+                print("----------")
+            else:
+                ng -= 1
+                print(f"Hmm... that is not a valid letter. And you have no  warnings left:")
+                print(f"So you loose one guess: {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            continue
+
+        guess = guess.lower()
+
+        if guess in letters_guessed:
+            if nw > 0:
+                nw -= 1
+                print(f"Hmm... you already guessed that letter. {nw} warnings left:")
+                print(get_guessed_word(secret_word, letters_guessed))
+                print("----------")
+            else:
+                ng -= 1
+                print(f"Hmm... you already guessed that letter. And you have no  warnings left:")
+                print(f"So you loose one guess: {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            continue
+        
+        letters_guessed.append(guess)
+
+        if is_word_guessed(secret_word, letters_guessed):
+            break
+        else:
+            if guess in secret_word:
+                print(f"Good girl! {get_guessed_word(secret_word, letters_guessed)}")
+                print("----------")
+            else:
+                print(f"Nooo... that letter is not in my word.")
+                print("----------")
+                if guess in ['a', 'e', 'i', 'o', 'u']:
+                    ng = ng - 2
+                else:
+                    ng -= 1
+        
+    if ng>0:
+        print("Congratulations girl, you won!")
+        score = ng * n
+        print(f"You scored: {score} pts")
+    else:
+        print(f"Hanged! You ran out of guesses. The word was {secret_word}.")
 
 
 
@@ -279,13 +359,14 @@ if __name__ == "__main__":
     # To test part 2, comment out the pass line above and
     # uncomment the following two lines.
     
-    secret_word = choose_word(wordlist)
-    # secret_word = "apple"
-    hangman(secret_word)
+    # secret_word = choose_word(wordlist)
+    secret_word = "apple"
+    # hangman(secret_word)
+
 ###############
     
     # To test part 3 re-comment out the above lines and 
     # uncomment the following two lines. 
     
-    #secret_word = choose_word(wordlist)
-    #hangman_with_hints(secret_word)
+    # secret_word = choose_word(wordlist)
+    hangman_with_hints(secret_word)
