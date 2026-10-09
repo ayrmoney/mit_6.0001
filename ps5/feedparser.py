@@ -90,7 +90,7 @@ except ImportError:
     base64 = binascii = None
 else:
     # Python 3.1 deprecates decodestring in favor of decodebytes
-    _base64decode = getattr(base64, 'decodebytes', base64.decodestring)
+    _base64decode = getattr(base64, 'decodebytes', None)
 
 # _s2bytes: convert a UTF-8 str to bytes if the interpreter is Python 3
 # _l2bytes: convert a list of ints to bytes if the interpreter is Python 3
@@ -130,7 +130,7 @@ ACCEPTABLE_URI_SCHEMES = (
 #ACCEPTABLE_URI_SCHEMES = ()
 
 # ---------- required modules (should come with any Python distribution) ----------
-import cgi
+import html
 import codecs
 import copy
 import datetime
@@ -3591,7 +3591,7 @@ def convert_to_utf8(http_headers, data):
     # XML declaration encoding, and HTTP encoding, following the
     # heuristic defined in RFC 3023.
     http_content_type = http_headers.get('content-type') or ''
-    http_content_type, params = cgi.parse_header(http_content_type)
+    http_content_type, params = html.parse_header(http_content_type)
     http_encoding = params.get('charset', '').replace("'", "")
     if not isinstance(http_encoding, str):
         http_encoding = http_encoding.decode('utf-8', 'ignore')

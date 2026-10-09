@@ -2,3 +2,5 @@
 
 Solutions to the assignments at:
 https://ocw.mit.edu/courses/6-0001-introduction-to-computer-science-and-programming-in-python-fall-2016/pages/assignments/
+
+-[ ] The given code for ps5 was stale. port that to the latest python to finish it.
